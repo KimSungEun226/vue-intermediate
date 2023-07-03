@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ul>
-      <li v-for="(todoItem, index) in propsdata" v-bind:key="todoItem.item" class="shadow">
+    <transition-group name="list" tag="ul">
+      <li v-for="(todoItem, index) in this.$store.state.todoItems" v-bind:key="todoItem.item" class="shadow">
         <i class="checkBtn fas fa-check" v-bind:class="{checkBtnCompleted : todoItem.completed}" 
           v-on:click="toggleComplted(todoItem, index)"></i>
         <span v-bind:class="{textCompleted : todoItem.completed}">{{todoItem.item}}</span>
@@ -9,19 +9,18 @@
           <i class="fas fa-trash-alt"></i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
 <script>
 export default {
-    props: ['propsdata'],
     methods: {
-    removeTodo: function(todoItem, index) {
-      this.$emit('removeItem', todoItem, index);
+    removeTodo(todoItem, index) {
+      this.$store.commit('removeOneItem', {todoItem, index});
     },
-    toggleComplted: function(todoItem, index) {
-      this.$emit('toggleItem', todoItem, index);
+    toggleComplted(todoItem, index) {
+      this.$store.commit('toggleOneItem', {todoItem, index});
     }
   },
 
@@ -60,5 +59,14 @@ li {
 .removeBtn {
   margin-left: auto;
   color: #de4343;
+}
+
+/* 리스트 아이템 트렌지션 효과 */
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>
